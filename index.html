@@ -566,15 +566,24 @@ async function checkUserAuthorization(user) {
     const role = String(profile.role || "").toLowerCase();
 
     if (profile.active !== true || !["admin", "staff"].includes(role)) {
-      currentRole = null;
-      showAuthMessage(
-        "Walang active LOCKSPORT permission ang account na ito. " +
-        "Makipag-ugnayan sa administrator.",
-        "error"
-      );
-      pendingActions.hidden = false;
-      return;
-    }
+  currentRole = null;
+
+  showAuthMessage(
+    "ACCESS DENIED — DIAGNOSTIC REPORT\n\n" +
+    "UID: " + user.uid + "\n" +
+    "Project: " + firebaseConfig.projectId + "\n" +
+    "Document exists: " + userSnap.exists() + "\n" +
+    "Active value: " + String(profile.active) + "\n" +
+    "Active type: " + typeof profile.active + "\n" +
+    "Role value: " + String(profile.role) + "\n" +
+    "Role type: " + typeof profile.role + "\n" +
+    "Normalized role: " + role,
+    "error"
+  );
+
+  pendingActions.hidden = false;
+  return;
+}
 
     currentUser = user;
     currentRole = role;
