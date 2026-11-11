@@ -1,0 +1,730 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+
+<title>LOCKSPORT | Key Inventory</title>
+
+<style>
+:root {
+  --bg: #101827;
+  --panel: #192538;
+  --panel2: #223148;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --accent: #38bdf8;
+  --green: #22c55e;
+  --red: #ef4444;
+  --border: #304158;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+
+header {
+  padding: 22px 18px;
+  background: #0b1220;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.brand {
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.brand span {
+  color: var(--accent);
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 5px;
+  letter-spacing: 1px;
+}
+
+.container {
+  max-width: 1200px;
+  padding: 20px;
+  margin: auto;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.stat {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stat-value {
+  font-size: 25px;
+  font-weight: bold;
+  margin-top: 7px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+input {
+  width: 100%;
+  min-width: 0;
+  padding: 13px;
+  background: var(--panel);
+  color: white;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  outline: none;
+  font-size: 14px;
+}
+
+input:focus {
+  border-color: var(--accent);
+}
+
+button {
+  border: none;
+  border-radius: 9px;
+  padding: 12px 16px;
+  background: var(--accent);
+  color: #082032;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+button:active {
+  transform: scale(.97);
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.section-title {
+  font-size: 17px;
+  margin: 0 0 15px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  gap: 15px;
+}
+
+.key-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.key-card:active {
+  transform: scale(.97);
+}
+
+.key-card:hover {
+  border-color: var(--accent);
+}
+
+.key-image {
+  width: 100%;
+  height: 145px;
+  object-fit: contain;
+  background: #fff;
+  padding: 8px;
+}
+
+.key-info {
+  padding: 12px;
+}
+
+.key-code {
+  font-size: 17px;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.key-name {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 5px 0 12px;
+  min-height: 28px;
+}
+
+.stock-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 7px;
+}
+
+.remaining {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 3px;
+}
+
+.low {
+  color: #fbbf24;
+}
+
+.out {
+  color: var(--red);
+}
+
+.stock-bar {
+  width: 100%;
+  height: 5px;
+  background: #334155;
+  border-radius: 10px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.stock-progress {
+  height: 100%;
+  background: var(--green);
+  border-radius: 10px;
+}
+
+.stock-progress.low {
+  background: #f59e0b;
+}
+
+.stock-progress.out {
+  background: var(--red);
+}
+
+.card-hint {
+  color: var(--muted);
+  font-size: 10px;
+  text-align: center;
+  padding: 0 10px 12px;
+}
+
+.status {
+  color: var(--muted);
+  text-align: center;
+  padding: 40px 10px;
+  grid-column: 1 / -1;
+}
+
+footer {
+  color: var(--muted);
+  font-size: 11px;
+  text-align: center;
+  padding: 30px 10px;
+}
+
+@media(max-width: 450px) {
+  .container {
+    padding: 14px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .key-image {
+    height: 125px;
+  }
+
+  .stat {
+    padding: 11px;
+  }
+
+  .stat-value {
+    font-size: 21px;
+  }
+
+  .toolbar button {
+    padding: 10px;
+    font-size: 12px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-content">
+    <div class="brand">LOCK<span>SPORT</span></div>
+    <div class="subtitle">KEY INVENTORY MANAGEMENT SYSTEM</div>
+  </div>
+</header>
+
+<main class="container">
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">TOTAL KEY TYPES</div>
+      <div class="stat-value" id="totalTypes">0</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-label">TOTAL STARTING STOCK</div>
+      <div class="stat-value" id="totalStarting">0</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-label">TOTAL REMAINING</div>
+      <div class="stat-value" id="totalRemaining">0</div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <input
+      type="search"
+      id="search"
+      placeholder="Search key code or key name..."
+    >
+    <button id="refreshBtn" onclick="loadInventory()">
+      Refresh
+    </button>
+  </div>
+
+  <h3 class="section-title">KEY INVENTORY</h3>
+
+  <div class="grid" id="keyGrid">
+    <div class="status">Loading inventory...</div>
+  </div>
+
+</main>
+
+<footer>
+  LOCKSPORT KEY INVENTORY SYSTEM<br>
+  Stock data is saved locally on this device.
+</footer>
+
+<script>
+
+// ======================================
+// 1. GITHUB CONFIGURATION
+// ======================================
+
+const GITHUB_OWNER = "YOUR_GITHUB_USERNAME";
+const REPOSITORY = "YOUR_REPOSITORY_NAME";
+const BRANCH = "main";
+const IMAGE_FOLDER = "image";
+
+
+// ======================================
+// 2. KEY INFORMATION
+// ======================================
+
+// Filename must match the actual image filename.
+// Starting stocks are entered here.
+
+const KEY_INFO = {
+
+  "key001.jpg": {
+    keycode: "001",
+    keyname: "Key Type A",
+    startingStocks: 100
+  },
+
+  "key002.jpg": {
+    keycode: "002",
+    keyname: "Key Type B",
+    startingStocks: 75
+  },
+
+  "key003.png": {
+    keycode: "003",
+    keyname: "Key Type C",
+    startingStocks: 50
+  },
+
+  "key004.jpg": {
+    keycode: "004",
+    keyname: "Key Type D",
+    startingStocks: 30
+  }
+
+};
+
+
+// ======================================
+// 3. LOCAL STORAGE
+// ======================================
+
+const STORAGE_KEY =
+  `LOCKSPORT_STOCK_${GITHUB_OWNER}_${REPOSITORY}`;
+
+let inventory = [];
+
+function getSavedStocks() {
+  try {
+    return JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "{}"
+    );
+  } catch {
+    return {};
+  }
+}
+
+function saveStocks() {
+  const stocks = {};
+
+  inventory.forEach(item => {
+    stocks[item.filename] = item.remaining;
+  });
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(stocks)
+  );
+}
+
+
+// ======================================
+// 4. LOAD IMAGES FROM GITHUB
+// ======================================
+
+async function loadInventory() {
+
+  const grid = document.getElementById("keyGrid");
+  const refreshBtn = document.getElementById("refreshBtn");
+
+  grid.innerHTML =
+    '<div class="status">Loading images from GitHub...</div>';
+
+  refreshBtn.disabled = true;
+
+  try {
+
+    const apiURL =
+      `https://api.github.com/repos/${GITHUB_OWNER}/${REPOSITORY}/contents/${IMAGE_FOLDER}?ref=${BRANCH}`;
+
+    const response = await fetch(apiURL);
+
+    if (!response.ok) {
+      throw new Error(
+        `GitHub error: ${response.status}`
+      );
+    }
+
+    const files = await response.json();
+
+    const imageFiles = files.filter(file =>
+      file.type === "file" &&
+      /\.(jpg|jpeg|png|webp|gif)$/i.test(file.name)
+    );
+
+    const saved = getSavedStocks();
+
+    inventory = imageFiles.map(file => {
+
+      const info = KEY_INFO[file.name] || {};
+
+      const starting = Number(
+        info.startingStocks ?? 0
+      );
+
+      const savedValue = saved[file.name];
+
+      return {
+        filename: file.name,
+        image: file.download_url,
+        keycode: info.keycode || file.name,
+        keyname: info.keyname || file.name,
+        startingStocks: starting,
+
+        remaining:
+          Number.isInteger(savedValue) &&
+          savedValue >= 0 &&
+          savedValue <= starting
+            ? savedValue
+            : starting
+      };
+
+    });
+
+    renderInventory();
+
+  } catch (error) {
+
+    console.error(error);
+
+    grid.innerHTML = `
+      <div class="status">
+        Unable to load inventory.<br><br>
+        Check your GitHub configuration and image folder.
+        <br><br>
+        ${error.message}
+      </div>
+    `;
+
+  } finally {
+
+    refreshBtn.disabled = false;
+
+  }
+}
+
+
+// ======================================
+// 5. DISPLAY INVENTORY
+// ======================================
+
+function renderInventory() {
+
+  const grid = document.getElementById("keyGrid");
+
+  const search = document
+    .getElementById("search")
+    .value.toLowerCase()
+    .trim();
+
+  const filtered = inventory.filter(item =>
+    String(item.keycode).toLowerCase().includes(search) ||
+    item.keyname.toLowerCase().includes(search)
+  );
+
+  if (!inventory.length) {
+    grid.innerHTML =
+      '<div class="status">No images found.</div>';
+  } else if (!filtered.length) {
+    grid.innerHTML =
+      '<div class="status">No matching keys found.</div>';
+  } else {
+
+    grid.innerHTML = filtered.map(item => {
+
+      const percent = item.startingStocks > 0
+        ? Math.max(0, Math.min(
+            100,
+            item.remaining / item.startingStocks * 100
+          ))
+        : 0;
+
+      const stockClass =
+        item.remaining === 0 ? "out" :
+        percent <= 25 ? "low" : "";
+
+      return `
+
+        <div class="key-card"
+          onclick="useStock('${escapeAttribute(item.filename)}')">
+
+          <img
+            class="key-image"
+            src="${escapeAttribute(item.image)}"
+            alt="${escapeAttribute(item.keyname)}"
+            loading="lazy"
+            onerror="this.style.opacity='0.2'"
+          >
+
+          <div class="key-info">
+
+            <div class="key-code">
+              ${escapeHTML(item.keycode)}
+            </div>
+
+            <div class="key-name">
+              ${escapeHTML(item.keyname)}
+            </div>
+
+            <div class="stock-row">
+              <span>Starting Stock</span>
+              <span>${item.startingStocks}</span>
+            </div>
+
+            <div class="stock-row">
+              <span>Remaining</span>
+            </div>
+
+            <div class="remaining ${stockClass}">
+              ${item.remaining} pcs
+            </div>
+
+            <div class="stock-bar">
+              <div
+                class="stock-progress ${stockClass}"
+                style="width:${percent}%">
+              </div>
+            </div>
+
+          </div>
+
+          <div class="card-hint">
+            TAP TO DEDUCT STOCK
+          </div>
+
+        </div>
+
+      `;
+
+    }).join("");
+
+  }
+
+  updateStats();
+
+}
+
+
+// ======================================
+// 6. USE / DEDUCT STOCK
+// ======================================
+
+function useStock(filename) {
+
+  const item = inventory.find(
+    x => x.filename === filename
+  );
+
+  if (!item) return;
+
+  if (item.remaining <= 0) {
+    alert("Out of stock!");
+    return;
+  }
+
+  const quantity = prompt(
+    `KEY: ${item.keycode}\n` +
+    `NAME: ${item.keyname}\n\n` +
+    `Remaining Stock: ${item.remaining} pcs\n\n` +
+    `Enter quantity used:`
+  );
+
+  if (quantity === null) return;
+
+  const amount = Number(quantity);
+
+  if (
+    quantity.trim() === "" ||
+    !Number.isSafeInteger(amount) ||
+    amount <= 0
+  ) {
+    alert("Please enter a valid whole number.");
+    return;
+  }
+
+  if (amount > item.remaining) {
+    alert(
+      `Insufficient stock!\n\n` +
+      `Available: ${item.remaining} pcs`
+    );
+    return;
+  }
+
+  item.remaining -= amount;
+
+  saveStocks();
+
+  renderInventory();
+
+  alert(
+    `STOCK UPDATED!\n\n` +
+    `Key: ${item.keycode}\n` +
+    `Used: ${amount} pcs\n` +
+    `Remaining: ${item.remaining} pcs`
+  );
+
+}
+
+
+// ======================================
+// 7. INVENTORY STATISTICS
+// ======================================
+
+function updateStats() {
+
+  const totalTypes = inventory.length;
+
+  const totalStarting = inventory.reduce(
+    (sum, item) => sum + item.startingStocks, 0
+  );
+
+  const totalRemaining = inventory.reduce(
+    (sum, item) => sum + item.remaining, 0
+  );
+
+  document.getElementById("totalTypes")
+    .textContent = totalTypes;
+
+  document.getElementById("totalStarting")
+    .textContent = totalStarting;
+
+  document.getElementById("totalRemaining")
+    .textContent = totalRemaining;
+
+}
+
+
+// ======================================
+// 8. HTML SAFETY
+// ======================================
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function escapeAttribute(value) {
+  return escapeHTML(value);
+}
+
+
+// ======================================
+// 9. SEARCH
+// ======================================
+
+document.getElementById("search")
+  .addEventListener("input", renderInventory);
+
+
+// ======================================
+// 10. INITIALIZE
+// ======================================
+
+loadInventory();
+
+</script>
+
+</body>
+</html>
