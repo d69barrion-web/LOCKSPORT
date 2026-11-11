@@ -1,0 +1,945 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+
+<title>LOCKSPORT | Key Inventory</title>
+
+<style>
+:root {
+  --bg: #101827;
+  --panel: #192538;
+  --panel2: #223148;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --accent: #38bdf8;
+  --green: #22c55e;
+  --red: #ef4444;
+  --border: #304158;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+
+header {
+  padding: 22px 18px;
+  background: #0b1220;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.brand {
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.brand span {
+  color: var(--accent);
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 5px;
+  letter-spacing: 1px;
+}
+
+.container {
+  max-width: 1200px;
+  padding: 20px;
+  margin: auto;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.stat {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stat-value {
+  font-size: 25px;
+  font-weight: bold;
+  margin-top: 7px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+input {
+  width: 100%;
+  min-width: 0;
+  padding: 13px;
+  background: var(--panel);
+  color: white;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  outline: none;
+  font-size: 14px;
+}
+
+input:focus {
+  border-color: var(--accent);
+}
+
+button {
+  border: none;
+  border-radius: 9px;
+  padding: 12px 16px;
+  background: var(--accent);
+  color: #082032;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+button:active {
+  transform: scale(.97);
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.section-title {
+  font-size: 17px;
+  margin: 0 0 15px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  gap: 15px;
+}
+
+.key-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.key-card:active {
+  transform: scale(.97);
+}
+
+.key-card:hover {
+  border-color: var(--accent);
+}
+
+.key-image {
+  width: 100%;
+  height: 145px;
+  object-fit: contain;
+  background: #fff;
+  padding: 8px;
+}
+
+.key-info {
+  padding: 12px;
+}
+
+.key-code {
+  font-size: 17px;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.key-name {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 5px 0 12px;
+  min-height: 28px;
+}
+
+.stock-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 7px;
+}
+
+.remaining {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 3px;
+}
+
+.low {
+  color: #fbbf24;
+}
+
+.out {
+  color: var(--red);
+}
+
+.stock-bar {
+  width: 100%;
+  height: 5px;
+  background: #334155;
+  border-radius: 10px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.stock-progress {
+  height: 100%;
+  background: var(--green);
+  border-radius: 10px;
+}
+
+.stock-progress.low {
+  background: #f59e0b;
+}
+
+.stock-progress.out {
+  background: var(--red);
+}
+
+.card-hint {
+  color: var(--muted);
+  font-size: 10px;
+  text-align: center;
+  padding: 0 10px 12px;
+}
+
+.status {
+  color: var(--muted);
+  text-align: center;
+  padding: 40px 10px;
+  grid-column: 1 / -1;
+}
+
+footer {
+  color: var(--muted);
+  font-size: 11px;
+  text-align: center;
+  padding: 30px 10px;
+}
+
+@media(max-width: 450px) {
+  .container {
+    padding: 14px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .key-image {
+    height: 125px;
+  }
+
+  .stat {
+    padding: 11px;
+  }
+
+  .stat-value {
+    font-size: 21px;
+  }
+
+  .toolbar button {
+    padding: 10px;
+    font-size: 12px;
+  }
+}
+
+/* Firebase authentication */
+[hidden] { display: none !important; }
+
+.login-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background:
+    radial-gradient(circle at top right, rgba(56,189,248,.12), transparent 38%),
+    var(--bg);
+}
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 28px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 18px 55px rgba(0,0,0,.25);
+}
+.login-card .brand { margin-bottom: 8px; }
+.login-description {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 12px 0 22px;
+}
+.google-button {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  color: #202124;
+  padding: 13px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+.google-mark {
+  width: 19px;
+  height: 19px;
+  display: inline-grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 18px;
+  color: #4285f4;
+}
+.auth-message {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 9px;
+  background: var(--panel2);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+.auth-message.error { color: #fecaca; }
+.auth-message.success { color: #bbf7d0; }
+.auth-message code {
+  color: var(--text);
+  user-select: all;
+}
+.account-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.account-details {
+  min-width: 0;
+  color: var(--muted);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.account-details strong {
+  color: var(--text);
+  font-size: 12px;
+}
+.logout-button {
+  padding: 9px 12px;
+  background: #334155;
+  color: var(--text);
+  font-size: 12px;
+}
+.pending-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.pending-actions button { flex: 1; }
+
+</style>
+</head>
+
+<body>
+
+
+<div id="loginScreen" class="login-screen">
+  <section class="login-card">
+    <div class="brand">LOCK<span>SPORT</span></div>
+    <div class="subtitle">KEY INVENTORY MANAGEMENT SYSTEM</div>
+
+    <div class="account-bar">
+      <div class="account-details" id="accountDetails"></div>
+      <button id="logoutBtn" class="logout-button" type="button">Sign out</button>
+    </div>
+
+    <p class="login-description">
+      Sign in gamit ang Google account na pinahintulutan ng LOCKSPORT administrator.
+    </p>
+    <button id="googleSignInBtn" class="google-button" type="button">
+      <span class="google-mark">G</span>
+      Continue with Google
+    </button>
+    <div id="authMessage" class="auth-message" aria-live="polite">
+      Secure sign-in powered by Firebase Authentication.
+    </div>
+    <div id="pendingActions" class="pending-actions" hidden>
+      <button id="checkAccessBtn" type="button">Check access</button>
+      <button id="pendingLogoutBtn" type="button" class="logout-button">Sign out</button>
+    </div>
+  </section>
+</div>
+
+<div id="appShell" hidden>
+
+<header>
+  <div class="header-content">
+    <div class="brand">LOCK<span>SPORT</span></div>
+    <div class="subtitle">KEY INVENTORY MANAGEMENT SYSTEM</div>
+  </div>
+</header>
+
+<main class="container">
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">TOTAL KEY TYPES</div>
+      <div class="stat-value" id="totalTypes">0</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-label">TOTAL STARTING STOCK</div>
+      <div class="stat-value" id="totalStarting">0</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-label">TOTAL REMAINING</div>
+      <div class="stat-value" id="totalRemaining">0</div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <input
+      type="search"
+      id="search"
+      placeholder="Search key code or key name..."
+    >
+    <button id="refreshBtn" onclick="loadInventory()">
+      Refresh
+    </button>
+  </div>
+
+  <h3 class="section-title">KEY INVENTORY</h3>
+
+  <div class="grid" id="keyGrid">
+    <div class="status">Loading inventory...</div>
+  </div>
+
+</main>
+
+<footer>
+  LOCKSPORT KEY INVENTORY SYSTEM<br>
+  Phase 2: Login enabled · Stock data still local until Firestore integration.
+</footer>
+</div><!-- /appShell -->
+
+<script type="module">
+// ======================================
+// 0. FIREBASE SDK
+// ======================================
+
+// IMPORTANT: Ilagay rito ang eksaktong Firebase web config
+// mula sa Firebase Console > Project settings > General > Your apps.
+
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged
+} from
+  "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc
+} from
+  "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDnGIDnWHsDdFO4Tm5cfQDmX2e0_m4FAho",
+  authDomain: "locksport-7cf08.firebaseapp.com",
+  projectId: "locksport-7cf08",
+  storageBucket: "locksport-7cf08.firebasestorage.app",
+  messagingSenderId: "154344146192",
+  appId: "1:154344146192:web:4ed2b0d3a22f0c91659195"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
+const googleProvider = new GoogleAuthProvider();
+
+const loginScreen = document.getElementById("loginScreen");
+const appShell = document.getElementById("appShell");
+const authMessage = document.getElementById("authMessage");
+const googleSignInBtn = document.getElementById("googleSignInBtn");
+const pendingActions = document.getElementById("pendingActions");
+const accountDetails = document.getElementById("accountDetails");
+
+let currentUser = null;
+let currentRole = null;
+
+function showAuthMessage(message, type = "") {
+  authMessage.className = "auth-message" + (type ? " " + type : "");
+  authMessage.textContent = message;
+}
+
+function showLogin() {
+  loginScreen.hidden = false;
+  appShell.hidden = true;
+}
+
+function showInventory(user, role) {
+  loginScreen.hidden = true;
+  appShell.hidden = false;
+
+  accountDetails.innerHTML =
+    `<strong>${escapeHTML(user.displayName || user.email || "Signed in")}</strong>` +
+    `<br>${escapeHTML(user.email || "")} · ${escapeHTML(role.toUpperCase())}`;
+
+  // Inventory loads only after Firebase confirms authorization.
+  loadInventory();
+}
+
+async function checkUserAuthorization(user) {
+  showLogin();
+  pendingActions.hidden = true;
+  showAuthMessage("Checking account authorization...");
+
+  try {
+    // User profile path: users/{Firebase Authentication UID}
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      currentRole = null;
+      showAuthMessage(
+        "Google sign-in successful, pero wala pang authorized user record.\n\n" +
+        "Para ma-authorize ang unang admin, kopyahin ang UID na ito:\n" +
+        user.uid +
+        "\n\nSa Firestore, gumawa ng document sa collection na users, " +
+        "gamit ang UID bilang Document ID. Fields: email (string), role (string: admin), active (boolean: true). " +
+        "Pagkatapos, pindutin ang Check access.",
+        "error"
+      );
+      pendingActions.hidden = false;
+      return;
+    }
+
+    const profile = userSnap.data();
+    const role = String(profile.role || "").toLowerCase();
+
+    if (profile.active !== true || !["admin", "staff"].includes(role)) {
+  currentRole = null;
+
+  showAuthMessage(
+    "ACCESS DENIED — DIAGNOSTIC REPORT\n\n" +
+    "UID: " + user.uid + "\n" +
+    "Project: " + firebaseConfig.projectId + "\n" +
+    "Document exists: " + userSnap.exists() + "\n" +
+    "Active value: " + String(profile.active) + "\n" +
+    "Active type: " + typeof profile.active + "\n" +
+    "Role value: " + String(profile.role) + "\n" +
+    "Role type: " + typeof profile.role + "\n" +
+    "Normalized role: " + role,
+    "error"
+  );
+
+  pendingActions.hidden = false;
+  return;
+}
+
+    currentUser = user;
+    currentRole = role;
+    showInventory(user, role);
+
+  } catch (error) {
+    console.error("Authorization check failed:", error);
+    showAuthMessage(
+      "Hindi ma-verify ang account. Tingnan ang Firestore Security Rules at internet connection.\n\n" +
+      error.message,
+      "error"
+    );
+    pendingActions.hidden = false;
+  }
+}
+
+googleSignInBtn.addEventListener("click", async () => {
+  googleSignInBtn.disabled = true;
+  showAuthMessage("Opening Google sign-in...");
+
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    await checkUserAuthorization(result.user);
+  } catch (error) {
+    console.error("Google sign-in failed:", error);
+    showAuthMessage(
+      "Hindi nakumpleto ang Google sign-in: " + error.message,
+      "error"
+    );
+  } finally {
+    googleSignInBtn.disabled = false;
+  }
+});
+
+document.getElementById("checkAccessBtn").addEventListener("click", async () => {
+  if (auth.currentUser) {
+    await checkUserAuthorization(auth.currentUser);
+  }
+});
+
+async function logout() {
+  try {
+    await signOut(auth);
+    currentUser = null;
+    currentRole = null;
+    inventory = [];
+    showLogin();
+    showAuthMessage("Signed out successfully.");
+  } catch (error) {
+    showAuthMessage("Sign-out error: " + error.message, "error");
+  }
+}
+
+document.getElementById("logoutBtn").addEventListener("click", logout);
+document.getElementById("pendingLogoutBtn").addEventListener("click", logout);
+
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    await checkUserAuthorization(user);
+  } else {
+    currentUser = null;
+    currentRole = null;
+    showLogin();
+    showAuthMessage("Sign in gamit ang authorized Google account.");
+  }
+});
+
+
+// ======================================
+// 1. GITHUB CONFIGURATION
+// ======================================
+
+const GITHUB_OWNER = "d69barrion-web";
+const REPOSITORY = "LOCKSPORT";
+const BRANCH = "main";
+const IMAGE_FOLDER = "image";
+
+
+// ======================================
+// 2. KEY INFORMATION
+// ======================================
+
+const KEY_INFO = {
+  "001.jpg": { keycode: "001", keyname: "YAMA RIGHT", startingStocks: 1 },
+  "002.jpg": { keycode: "002", keyname: "YAMA LEFT", startingStocks: 5 },
+  "003.jpg": { keycode: "003", keyname: "MITSUBISHI LONG (1LINE) RIGHT", startingStocks: 6 },
+  "004.jpg": { keycode: "004", keyname: "MITSUBISHI LONG (1LINE) LEFT", startingStocks: 5 },
+  "005.jpg": { keycode: "005", keyname: "HONDA MEDIUM LEFT", startingStocks: 1 },
+  "006.jpg": { keycode: "006", keyname: "401 LONG FAULTLESS", startingStocks: 15 },
+  "007.jpg": { keycode: "007", keyname: "AMERIOCK", startingStocks: 0 },
+  "008.jpg": { keycode: "008", keyname: "401 KWIKSET LEFT", startingStocks: 1 },
+  "009.jpg": { keycode: "009", keyname: "HONDA MEDIUM RIGHT", startingStocks: 1 },
+  "010.jpg": { keycode: "010", keyname: "YALE 101 (DOUBLESTOPPER) RIGHT", startingStocks: 13 },
+  "011.jpg": { keycode: "011", keyname: "GLOBE 03 LEFT", startingStocks: 4 },
+  "012.jpg": { keycode: "012", keyname: "HONDA RUSI/SKYGO/MOTORSTAR/(FLAT BLADE) W/MAGNET", startingStocks: 7 },
+  "013.jpg": { keycode: "013", keyname: "SUZUKI SKYDRIVE HAYATE RIGHT SLOT W/ MAGNET", startingStocks: 2 },
+  "014.jpg": { keycode: "014", keyname: "HONDA DOUBLE SLOT RIGHT W/ MAGNET", startingStocks: 5 },
+  "015.jpg": { keycode: "015", keyname: "HOND LONG KEY EMBRYO SINGLE SLOT LEFT W/ MAGNET", startingStocks: 4 },
+  "016.jpg": { keycode: "016", keyname: "SOLEX BLANK KEY (ABLOY)", startingStocks: 1 },
+  "018.jpg": { keycode: "018", keyname: "HONDA XLR LEFT (LONG)", startingStocks: 3 },
+  "019.jpg": { keycode: "019", keyname: "SUZUKI SHOGUN METAL LEFT", startingStocks: 2 },
+  "020.jpg": { keycode: "020", keyname: "SUZUKI SHOGUN METAL RIGHT", startingStocks: 4 },
+  "021.jpg": { keycode: "021", keyname: "401 KWIKSET RIGHT", startingStocks: 0 },
+  "022.jpg": { keycode: "022", keyname: "HCS REPLACEMENT FOR TOYOTA", startingStocks: 16 },
+  "023.jpg": { keycode: "023", keyname: "GLOBE 03 RIGHT", startingStocks: 11 },
+  "024.jpg": { keycode: "024", keyname: "HONGDA LONG METAL (RIGHT)", startingStocks: 6 },
+  "025.jpg": { keycode: "025", keyname: "HCS REPLACEMENT FOR MITSUBISHI", startingStocks: 11 },
+  "026.jpg": { keycode: "026", keyname: "HONDA METAL SMALL TMX LEFT", startingStocks: 3 },
+  "027.jpg": { keycode: "027", keyname: "YAMAHA STX METAL RIGHT", startingStocks: 0 },
+  "028.jpg": { keycode: "028", keyname: "KAWASAKI BARAKO LEFT", startingStocks: 10 },
+  "029.jpg": { keycode: "029", keyname: "HONGDA LONG METAL (LEFT)", startingStocks: 0 },
+  "030.jpg": { keycode: "030", keyname: "HONDA DASH LONG METAL (LEFT)", startingStocks: 7 }
+};
+
+
+// ======================================
+// 3. TEMPORARY LOCAL STOCK STORAGE
+// ======================================
+// Phase 2 muna ito. Sa susunod na phase ililipat natin
+// ang stock records sa Firestore.
+
+const STORAGE_KEY = `LOCKSPORT_STOCK_${GITHUB_OWNER}_${REPOSITORY}`;
+let inventory = [];
+
+function getSavedStocks() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function saveStocks() {
+  const stocks = {};
+  inventory.forEach(item => {
+    stocks[item.filename] = item.remaining;
+  });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(stocks));
+}
+
+
+// ======================================
+// 4. LOAD IMAGES FROM GITHUB
+// ======================================
+
+async function loadInventory() {
+  const grid = document.getElementById("keyGrid");
+  const refreshBtn = document.getElementById("refreshBtn");
+
+  grid.innerHTML = '<div class="status">Loading images from GitHub...</div>';
+  refreshBtn.disabled = true;
+
+  try {
+    const apiURL =
+      `https://api.github.com/repos/${GITHUB_OWNER}/${REPOSITORY}/contents/${IMAGE_FOLDER}?ref=${BRANCH}`;
+
+    const response = await fetch(apiURL);
+
+    if (!response.ok) {
+      throw new Error(`GitHub error: ${response.status}`);
+    }
+
+    const files = await response.json();
+    const imageFiles = files.filter(file =>
+      file.type === "file" &&
+      /\.(jpg|jpeg|png|webp|gif)$/i.test(file.name)
+    );
+
+    const saved = getSavedStocks();
+
+    inventory = imageFiles.map(file => {
+      const info = KEY_INFO[file.name] || {};
+      const starting = Number(info.startingStocks ?? 0);
+      const savedValue = saved[file.name];
+
+      return {
+        filename: file.name,
+        image: file.download_url,
+        keycode: info.keycode || file.name,
+        keyname: info.keyname || file.name,
+        startingStocks: starting,
+        remaining:
+          Number.isInteger(savedValue) &&
+          savedValue >= 0 &&
+          savedValue <= starting
+            ? savedValue
+            : starting
+      };
+    });
+
+    renderInventory();
+  } catch (error) {
+    console.error(error);
+    grid.innerHTML = `
+      <div class="status">
+        Unable to load inventory.<br><br>
+        Check your GitHub configuration and image folder.
+        <br><br>${escapeHTML(error.message)}
+      </div>
+    `;
+  } finally {
+    refreshBtn.disabled = false;
+  }
+}
+
+
+// ======================================
+// 5. DISPLAY INVENTORY
+// ======================================
+
+function renderInventory() {
+  const grid = document.getElementById("keyGrid");
+  const search = document.getElementById("search").value.toLowerCase().trim();
+
+  const filtered = inventory.filter(item =>
+    String(item.keycode).toLowerCase().includes(search) ||
+    item.keyname.toLowerCase().includes(search)
+  );
+
+  if (!inventory.length) {
+    grid.innerHTML = '<div class="status">No images found.</div>';
+  } else if (!filtered.length) {
+    grid.innerHTML = '<div class="status">No matching keys found.</div>';
+  } else {
+    grid.innerHTML = filtered.map(item => {
+      const percent = item.startingStocks > 0
+        ? Math.max(0, Math.min(100, item.remaining / item.startingStocks * 100))
+        : 0;
+
+      const stockClass =
+        item.remaining === 0 ? "out" :
+        percent <= 25 ? "low" : "";
+
+      return `
+        <div class="key-card"
+          onclick="useStock('${escapeAttribute(item.filename)}')">
+          <img class="key-image"
+            src="${escapeAttribute(item.image)}"
+            alt="${escapeAttribute(item.keyname)}"
+            loading="lazy"
+            onerror="this.style.opacity='0.2'">
+          <div class="key-info">
+            <div class="key-code">${escapeHTML(item.keycode)}</div>
+            <div class="key-name">${escapeHTML(item.keyname)}</div>
+            <div class="stock-row">
+              <span>Starting Stock</span>
+              <span>${item.startingStocks}</span>
+            </div>
+            <div class="stock-row"><span>Remaining</span></div>
+            <div class="remaining ${stockClass}">${item.remaining} pcs</div>
+            <div class="stock-bar">
+              <div class="stock-progress ${stockClass}" style="width:${percent}%"></div>
+            </div>
+          </div>
+          <div class="card-hint">TAP TO DEDUCT STOCK</div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  updateStats();
+}
+
+
+// ======================================
+// 6. USE / DEDUCT STOCK
+// ======================================
+
+function useStock(filename) {
+  const item = inventory.find(x => x.filename === filename);
+  if (!item) return;
+
+  if (item.remaining <= 0) {
+    alert("Out of stock!");
+    return;
+  }
+
+  const quantity = prompt(
+    `KEY: ${item.keycode}\n` +
+    `NAME: ${item.keyname}\n\n` +
+    `Remaining Stock: ${item.remaining} pcs\n\n` +
+    `Enter quantity used:`
+  );
+
+  if (quantity === null) return;
+
+  const amount = Number(quantity);
+
+  if (quantity.trim() === "" || !Number.isSafeInteger(amount) || amount <= 0) {
+    alert("Please enter a valid whole number.");
+    return;
+  }
+
+  if (amount > item.remaining) {
+    alert(`Insufficient stock!\n\nAvailable: ${item.remaining} pcs`);
+    return;
+  }
+
+  item.remaining -= amount;
+  saveStocks();
+  renderInventory();
+
+  alert(
+    `STOCK UPDATED!\n\n` +
+    `Key: ${item.keycode}\n` +
+    `Used: ${amount} pcs\n` +
+    `Remaining: ${item.remaining} pcs`
+  );
+}
+
+
+// ======================================
+// 7. INVENTORY STATISTICS
+// ======================================
+
+function updateStats() {
+  document.getElementById("totalTypes").textContent = inventory.length;
+
+  document.getElementById("totalStarting").textContent =
+    inventory.reduce((sum, item) => sum + item.startingStocks, 0);
+
+  document.getElementById("totalRemaining").textContent =
+    inventory.reduce((sum, item) => sum + item.remaining, 0);
+}
+
+
+// ======================================
+// 8. HTML SAFETY
+// ======================================
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function escapeAttribute(value) {
+  return escapeHTML(value);
+}
+
+
+// ======================================
+// 9. SEARCH + GLOBAL HANDLERS
+// ======================================
+
+document.getElementById("search").addEventListener("input", renderInventory);
+
+// Inline onclick in the existing inventory cards needs a window-level function.
+window.useStock = useStock;
+window.loadInventory = loadInventory;
+
+</script>
+
+</body>
+</html>
