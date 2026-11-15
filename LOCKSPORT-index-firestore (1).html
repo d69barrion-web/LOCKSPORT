@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+<title>LOCKSPORT | Key Inventory</title>
+<style>
+:root{--bg:#101827;--panel:#192538;--panel2:#223148;--text:#f1f5f9;--muted:#94a3b8;--accent:#38bdf8;--green:#22c55e;--red:#ef4444;--border:#304158}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+header{padding:22px 18px;background:#0b1220;border-bottom:1px solid var(--border)}.header-content{max-width:1200px;margin:auto}
+.brand{font-size:25px;font-weight:900;letter-spacing:2px}.brand span{color:var(--accent)}.subtitle{color:var(--muted);font-size:12px;margin-top:5px;letter-spacing:1px}
+.container{max-width:1200px;padding:20px;margin:auto}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:15px}.stat-label{color:var(--muted);font-size:12px}.stat-value{font-size:25px;font-weight:bold;margin-top:7px}
+.toolbar{display:flex;gap:10px;margin-bottom:12px}input{width:100%;min-width:0;padding:13px;background:var(--panel);color:white;border:1px solid var(--border);border-radius:9px;outline:none;font-size:14px}
+input:focus{border-color:var(--accent)}button{border:none;border-radius:9px;padding:12px 16px;background:var(--accent);color:#082032;font-weight:bold;cursor:pointer;white-space:nowrap}
+button:active{transform:scale(.97)}button:disabled{opacity:.5;cursor:not-allowed}.secondary{background:#334155;color:var(--text)}.admin-button{background:#a7f3d0;color:#064e3b}
+.section-title{font-size:17px;margin:18px 0 15px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:15px}
+.key-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:.2s}.key-card:active{transform:scale(.97)}.key-card:hover{border-color:var(--accent)}
+.key-image{width:100%;height:145px;object-fit:contain;background:#fff;padding:8px}.key-info{padding:12px}.key-code{font-size:17px;font-weight:bold;color:var(--accent)}
+.key-name{color:var(--muted);font-size:12px;margin:5px 0 12px;min-height:28px}.stock-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:7px}
+.remaining{font-size:24px;font-weight:bold;margin-top:3px}.low{color:#fbbf24}.out{color:var(--red)}.stock-bar{width:100%;height:5px;background:#334155;border-radius:10px;margin-top:10px;overflow:hidden}
+.stock-progress{height:100%;background:var(--green);border-radius:10px}.stock-progress.low{background:#f59e0b}.stock-progress.out{background:var(--red)}
+.card-hint{color:var(--muted);font-size:10px;text-align:center;padding:0 10px 12px}.status{color:var(--muted);text-align:center;padding:40px 10px;grid-column:1/-1}
+footer{color:var(--muted);font-size:11px;text-align:center;padding:30px 10px}
+[hidden]{display:none!important}.login-screen{min-height:100vh;display:grid;place-items:center;padding:22px;background:radial-gradient(circle at top right,rgba(56,189,248,.12),transparent 38%),var(--bg)}
+.login-card{width:100%;max-width:420px;padding:28px;background:var(--panel);border:1px solid var(--border);border-radius:18px;text-align:center;box-shadow:0 18px 55px rgba(0,0,0,.25)}
+.login-card .brand{margin-bottom:8px}.login-description{color:var(--muted);font-size:13px;line-height:1.6;margin:12px 0 22px}
+.google-button{width:100%;display:flex;justify-content:center;align-items:center;gap:10px;background:#fff;color:#202124;padding:13px;border-radius:10px;font-size:14px}
+.google-mark{width:19px;height:19px;display:inline-grid;place-items:center;font-weight:900;font-size:18px;color:#4285f4}
+.auth-message{margin-top:16px;padding:12px;border-radius:9px;background:var(--panel2);color:var(--muted);font-size:12px;line-height:1.55;overflow-wrap:anywhere;text-align:left;white-space:pre-wrap}
+.auth-message.error{color:#fecaca}.auth-message.success{color:#bbf7d0}.account-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;flex-wrap:wrap}
+.account-details{min-width:0;color:var(--muted);font-size:11px;overflow-wrap:anywhere}.account-details strong{color:var(--text);font-size:12px}
+.logout-button{padding:9px 12px;background:#334155;color:var(--text);font-size:12px}.pending-actions{display:flex;gap:8px;margin-top:12px}.pending-actions button{flex:1}
+.admin-tools{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}.notice{padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:12px;line-height:1.5;margin-bottom:16px}
+@media(max-width:450px){.container{padding:14px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.key-image{height:125px}.stat{padding:11px}.stat-value{font-size:21px}.toolbar button,.admin-tools button{padding:10px;font-size:12px}}
+</style>
+</head>
+<body>
+<div id="loginScreen" class="login-screen">
+  <section class="login-card">
+    <div class="brand">LOCK<span>SPORT</span></div><div class="subtitle">KEY INVENTORY MANAGEMENT SYSTEM</div>
+    <div class="account-bar"><div class="account-details" id="accountDetails"></div><button id="logoutBtn" class="logout-button" type="button" hidden>Sign out</button></div>
+    <p class="login-description">Sign in gamit ang Google account na pinahintulutan ng LOCKSPORT administrator.</p>
+    <button id="googleSignInBtn" class="google-button" type="button"><span class="google-mark">G</span>Continue with Google</button>
+    <div id="authMessage" class="auth-message" aria-live="polite">Secure sign-in powered by Firebase Authentication.</div>
+    <div id="pendingActions" class="pending-actions" hidden><button id="checkAccessBtn" type="button">Check access</button><button id="pendingLogoutBtn" type="button" class="logout-button">Sign out</button></div>
+  </section>
+</div>
+<div id="appShell" hidden>
+<header><div class="header-content"><div class="brand">LOCK<span>SPORT</span></div><div class="subtitle">KEY INVENTORY MANAGEMENT SYSTEM</div></div></header>
+<main class="container">
+  <div class="account-bar" style="margin:0 0 16px"><div class="account-details" id="appAccountDetails"></div><button id="appLogoutBtn" class="logout-button" type="button">Sign out</button></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-label">TOTAL KEY TYPES</div><div class="stat-value" id="totalTypes">0</div></div>
+    <div class="stat"><div class="stat-label">TOTAL STARTING STOCK</div><div class="stat-value" id="totalStarting">0</div></div>
+    <div class="stat"><div class="stat-label">TOTAL REMAINING</div><div class="stat-value" id="totalRemaining">0</div></div>
+  </div>
+  <div id="adminTools" class="admin-tools" hidden>
+    <button id="initializeBtn" class="admin-button" type="button">Initialize Firestore Inventory</button>
+    <button id="refreshBtn" class="secondary" type="button">Refresh Images</button>
+  </div>
+  <div id="inventoryNotice" class="notice" hidden></div>
+  <div class="toolbar"><input type="search" id="search" placeholder="Search key code or key name..."><button id="refreshBtnStaff" class="secondary" type="button">Refresh</button></div>
+  <h3 class="section-title">KEY INVENTORY</h3>
+  <div class="grid" id="keyGrid"><div class="status">Waiting for inventory...</div></div>
+</main>
+<footer>LOCKSPORT KEY INVENTORY SYSTEM<br>Phase 3: Firestore shared inventory · Real-time updates enabled</footer>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, collection, onSnapshot, runTransaction,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDnGIDnWHsDdFO4Tm5cfQDmX2e0_m4FAho",
+  authDomain: "locksport-7cf08.firebaseapp.com",
+  projectId: "locksport-7cf08",
+  storageBucket: "locksport-7cf08.firebasestorage.app",
+  messagingSenderId: "154344146192",
+  appId: "1:154344146192:web:4ed2b0d3a22f0c91659195"
+};
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
+const googleProvider = new GoogleAuthProvider();
+
+const $ = id => document.getElementById(id);
+let currentUser = null;
+let currentRole = null;
+let inventory = [];
+let imageCatalog = [];
+let unsubscribeInventory = null;
+let inventoryLoaded = false;
+let imageLoadInProgress = false;
+
+const GITHUB_OWNER = "d69barrion-web";
+const REPOSITORY = "LOCKSPORT";
+const BRANCH = "main";
+const IMAGE_FOLDER = "image";
+
+const KEY_INFO = {
+"001.jpg":{keycode:"001",keyname:"YAMA RIGHT",startingStocks:1},
+"002.jpg":{keycode:"002",keyname:"YAMA LEFT",startingStocks:5},
+"003.jpg":{keycode:"003",keyname:"MITSUBISHI LONG (1LINE) RIGHT",startingStocks:6},
+"004.jpg":{keycode:"004",keyname:"MITSUBISHI LONG (1LINE) LEFT",startingStocks:5},
+"005.jpg":{keycode:"005",keyname:"HONDA MEDIUM LEFT",startingStocks:1},
+"006.jpg":{keycode:"006",keyname:"401 LONG FAULTLESS",startingStocks:15},
+"007.jpg":{keycode:"007",keyname:"AMERIOCK",startingStocks:0},
+"008.jpg":{keycode:"008",keyname:"401 KWIKSET LEFT",startingStocks:1},
+"009.jpg":{keycode:"009",keyname:"HONDA MEDIUM RIGHT",startingStocks:1},
+"010.jpg":{keycode:"010",keyname:"YALE 101 (DOUBLESTOPPER) RIGHT",startingStocks:13},
+"011.jpg":{keycode:"011",keyname:"GLOBE 03 LEFT",startingStocks:4},
+"012.jpg":{keycode:"012",keyname:"HONDA RUSI/SKYGO/MOTORSTAR/(FLAT BLADE) W/MAGNET",startingStocks:7},
+"013.jpg":{keycode:"013",keyname:"SUZUKI SKYDRIVE HAYATE RIGHT SLOT W/ MAGNET",startingStocks:2},
+"014.jpg":{keycode:"014",keyname:"HONDA DOUBLE SLOT RIGHT W/ MAGNET",startingStocks:5},
+"015.jpg":{keycode:"015",keyname:"HOND LONG KEY EMBRYO SINGLE SLOT LEFT W/ MAGNET",startingStocks:4},
+"016.jpg":{keycode:"016",keyname:"SOLEX BLANK KEY (ABLOY)",startingStocks:1},
+"018.jpg":{keycode:"018",keyname:"HONDA XLR LEFT (LONG)",startingStocks:3},
+"019.jpg":{keycode:"019",keyname:"SUZUKI SHOGUN METAL LEFT",startingStocks:2},
+"020.jpg":{keycode:"020",keyname:"SUZUKI SHOGUN METAL RIGHT",startingStocks:4},
+"021.jpg":{keycode:"021",keyname:"401 KWIKSET RIGHT",startingStocks:0},
+"022.jpg":{keycode:"022",keyname:"HCS REPLACEMENT FOR TOYOTA",startingStocks:16},
+"023.jpg":{keycode:"023",keyname:"GLOBE 03 RIGHT",startingStocks:11},
+"024.jpg":{keycode:"024",keyname:"HONGDA LONG METAL (RIGHT)",startingStocks:6},
+"025.jpg":{keycode:"025",keyname:"HCS REPLACEMENT FOR MITSUBISHI",startingStocks:11},
+"026.jpg":{keycode:"026",keyname:"HONDA METAL SMALL TMX LEFT",startingStocks:3},
+"027.jpg":{keycode:"027",keyname:"YAMAHA STX METAL RIGHT",startingStocks:0},
+"028.jpg":{keycode:"028",keyname:"KAWASAKI BARAKO LEFT",startingStocks:10},
+"029.jpg":{keycode:"029",keyname:"HONGDA LONG METAL (LEFT)",startingStocks:0},
+"030.jpg":{keycode:"030",keyname:"HONDA DASH LONG METAL (LEFT)",startingStocks:7}
+};
+
+function escapeHTML(value){
+  return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function showAuthMessage(message,type=""){
+  $("authMessage").className="auth-message"+(type?" "+type:"");
+  $("authMessage").textContent=message;
+}
+function showLogin(){
+  $("loginScreen").hidden=false;
+  $("appShell").hidden=true;
+}
+function stopInventoryListener(){
+  if(unsubscribeInventory){unsubscribeInventory();unsubscribeInventory=null;}
+  inventory=[];
+  inventoryLoaded=false;
+}
+function showInventory(user,role){
+  $("loginScreen").hidden=true;
+  $("appShell").hidden=false;
+  const account=`<strong>${escapeHTML(user.displayName||user.email||"Signed in")}</strong><br>${escapeHTML(user.email||"")} · ${escapeHTML(role.toUpperCase())}`;
+  $("appAccountDetails").innerHTML=account;
+  $("accountDetails").innerHTML=account;
+  $("adminTools").hidden=role!=="admin";
+  startInventoryListener();
+  loadImages();
+}
+
+async function checkUserAuthorization(user){
+  showLogin();
+  $("pendingActions").hidden=true;
+  $("logoutBtn").hidden=false;
+  showAuthMessage("Checking account authorization...");
+  try{
+    const userSnap=await getDoc(doc(db,"users",user.uid));
+    if(!userSnap.exists()){
+      currentRole=null;
+      showAuthMessage("Google sign-in successful, pero wala pang authorized user record.\n\nUID:\n"+user.uid+"\n\nSa Firestore, collection users, document ID = UID. Fields: email (string), role (string: admin), active (boolean: true). Pagkatapos, pindutin ang Check access.","error");
+      $("pendingActions").hidden=false;
+      return;
+    }
+    const profile=userSnap.data();
+    const role=String(profile.role||"").toLowerCase();
+    if(profile.active!==true||!["admin","staff"].includes(role)){
+      currentRole=null;
+      showAuthMessage("ACCESS DENIED\n\nUID: "+user.uid+"\nProject: "+firebaseConfig.projectId+"\nActive: "+String(profile.active)+" ("+typeof profile.active+")\nRole: "+String(profile.role)+" ("+typeof profile.role+")","error");
+      $("pendingActions").hidden=false;
+      return;
+    }
+    currentUser=user;
+    currentRole=role;
+    showInventory(user,role);
+  }catch(error){
+    console.error(error);
+    showAuthMessage("Hindi ma-verify ang account. Tingnan ang Firestore Security Rules at internet connection.\n\n"+error.message,"error");
+    $("pendingActions").hidden=false;
+  }
+}
+
+$("googleSignInBtn").addEventListener("click",async()=>{
+  $("googleSignInBtn").disabled=true;
+  showAuthMessage("Opening Google sign-in...");
+  try{const result=await signInWithPopup(auth,googleProvider);await checkUserAuthorization(result.user);}
+  catch(error){console.error(error);showAuthMessage("Hindi nakumpleto ang Google sign-in: "+error.message,"error");}
+  finally{$("googleSignInBtn").disabled=false;}
+});
+$("checkAccessBtn").addEventListener("click",async()=>{if(auth.currentUser)await checkUserAuthorization(auth.currentUser);});
+async function logout(){
+  stopInventoryListener();
+  currentUser=null;currentRole=null;
+  try{await signOut(auth);showLogin();$("logoutBtn").hidden=true;showAuthMessage("Signed out successfully.");}
+  catch(error){showAuthMessage("Sign-out error: "+error.message,"error");}
+}
+$("logoutBtn").addEventListener("click",logout);
+$("pendingLogoutBtn").addEventListener("click",logout);
+$("appLogoutBtn").addEventListener("click",logout);
+onAuthStateChanged(auth,async user=>{
+  if(user)await checkUserAuthorization(user);
+  else{stopInventoryListener();currentUser=null;currentRole=null;showLogin();$("logoutBtn").hidden=true;showAuthMessage("Sign in gamit ang authorized Google account.");}
+});
+
+// Load images from GitHub. Stock figures always come from Firestore.
+async function loadImages(){
+  if(imageLoadInProgress)return;
+  imageLoadInProgress=true;
+  $("keyGrid").innerHTML='<div class="status">Loading key images from GitHub...</div>';
+  try{
+    const url=`https://api.github.com/repos/${GITHUB_OWNER}/${REPOSITORY}/contents/${IMAGE_FOLDER}?ref=${BRANCH}`;
+    const response=await fetch(url);
+    if(!response.ok)throw new Error("GitHub error: "+response.status);
+    const files=await response.json();
+    imageCatalog=files.filter(f=>f.type==="file"&&/\.(jpg|jpeg|png|webp|gif)$/i.test(f.name))
+      .map(f=>({filename:f.name,image:f.download_url}));
+    renderInventory();
+  }catch(error){
+    console.error(error);
+    $("keyGrid").innerHTML='<div class="status">Unable to load images from GitHub.<br><br>'+escapeHTML(error.message)+'</div>';
+  }finally{imageLoadInProgress=false;}
+}
+
+function startInventoryListener(){
+  stopInventoryListener();
+  $("keyGrid").innerHTML='<div class="status">Connecting to Firestore inventory...</div>';
+  unsubscribeInventory=onSnapshot(collection(db,"inventory"),snapshot=>{
+    inventory=snapshot.docs.map(d=>({id:d.id,...d.data()}));
+    inventoryLoaded=true;
+    $("inventoryNotice").hidden=inventory.length>0;
+    if(inventory.length===0){
+      $("inventoryNotice").textContent=currentRole==="admin"
+        ?"Firestore inventory is empty. Press “Initialize Firestore Inventory” once to create the 29 starting records. This will not overwrite existing records."
+        :"Wala pang inventory records. Paki-contact ang LOCKSPORT administrator para sa initialization.";
+      $("inventoryNotice").hidden=false;
+    }
+    renderInventory();
+  },error=>{
+    console.error("Firestore listener:",error);
+    $("keyGrid").innerHTML='<div class="status">Unable to read Firestore inventory.<br><br>'+escapeHTML(error.message)+'</div>';
+    $("inventoryNotice").hidden=false;
+    $("inventoryNotice").textContent="Firestore error: "+error.message;
+  });
+}
+
+async function initializeInventory(){
+  if(currentRole!=="admin"){alert("Admin access required.");return;}
+  const button=$("initializeBtn");
+  if(!confirm("Create missing Firestore inventory records from KEY_INFO?\n\nExisting inventory records will NOT be overwritten."))return;
+  button.disabled=true;
+  button.textContent="Initializing...";
+  try{
+    let created=0,existing=0;
+    for(const [filename,info] of Object.entries(KEY_INFO)){
+      const ref=doc(db,"inventory",info.keycode);
+      const result=await runTransaction(db,async tx=>{
+        const snap=await tx.get(ref);
+        if(snap.exists())return "existing";
+        tx.set(ref,{
+          filename,
+          keycode:info.keycode,
+          keyname:info.keyname,
+          startingStocks:info.startingStocks,
+          remaining:info.startingStocks,
+          updatedAt:serverTimestamp()
+        });
+        return "created";
+      });
+      if(result==="created")created++;else existing++;
+    }
+    alert("Initialization complete!\n\nCreated: "+created+"\nAlready existed: "+existing+"\n\nNo existing stock values were changed.");
+  }catch(error){
+    console.error(error);
+    alert("Initialization stopped.\n\n"+error.message+"\n\nCheck Firestore Security Rules. Any records already created remain safe; you can run initialization again because existing records will be skipped.");
+  }finally{button.disabled=false;button.textContent="Initialize Firestore Inventory";}
+}
+$("initializeBtn").addEventListener("click",initializeInventory);
+$("refreshBtn").addEventListener("click",loadImages);
+$("refreshBtnStaff").addEventListener("click",loadImages);
+
+function renderInventory(){
+  if(!inventoryLoaded)return;
+  const grid=$("keyGrid");
+  const search=$("search").value.toLowerCase().trim();
+  const imageByName=new Map(imageCatalog.map(x=>[x.filename,x.image]));
+  const sorted=[...inventory].sort((a,b)=>String(a.keycode).localeCompare(String(b.keycode)));
+  const filtered=sorted.filter(item=>String(item.keycode).toLowerCase().includes(search)||String(item.keyname).toLowerCase().includes(search));
+  if(!sorted.length){
+    grid.innerHTML='<div class="status">No Firestore inventory records yet.</div>';
+  }else if(!filtered.length){
+    grid.innerHTML='<div class="status">No matching keys found.</div>';
+  }else{
+    grid.innerHTML=filtered.map(item=>{
+      const starting=Number(item.startingStocks)||0;
+      const remaining=Number(item.remaining)||0;
+      const percent=starting>0?Math.max(0,Math.min(100,remaining/starting*100)):0;
+      const cls=remaining===0?"out":percent<=25?"low":"";
+      const image=imageByName.get(item.filename)||"";
+      return `<div class="key-card" data-key="${escapeHTML(item.keycode)}">
+        <img class="key-image" src="${escapeHTML(image)}" alt="${escapeHTML(item.keyname)}" loading="lazy" onerror="this.style.opacity='.2'">
+        <div class="key-info"><div class="key-code">${escapeHTML(item.keycode)}</div>
+        <div class="key-name">${escapeHTML(item.keyname)}</div>
+        <div class="stock-row"><span>Starting Stock</span><span>${starting}</span></div>
+        <div class="stock-row"><span>Remaining</span></div>
+        <div class="remaining ${cls}">${remaining} pcs</div>
+        <div class="stock-bar"><div class="stock-progress ${cls}" style="width:${percent}%"></div></div></div>
+        <div class="card-hint">TAP TO DEDUCT STOCK</div></div>`;
+    }).join("");
+    grid.querySelectorAll(".key-card").forEach(card=>card.addEventListener("click",()=>useStock(card.dataset.key)));
+  }
+  updateStats();
+}
+
+async function useStock(keycode){
+  if(!currentUser||!["admin","staff"].includes(currentRole))return;
+  const item=inventory.find(x=>String(x.keycode)===String(keycode));
+  if(!item)return;
+  if(item.remaining<=0){alert("Out of stock!");return;}
+  const input=prompt(`KEY: ${item.keycode}\nNAME: ${item.keyname}\n\nCurrent stock: ${item.remaining} pcs\n\nEnter quantity used:`);
+  if(input===null)return;
+  const amount=Number(input);
+  if(input.trim()===""||!Number.isSafeInteger(amount)||amount<=0){alert("Please enter a valid whole number.");return;}
+  if(amount>item.remaining){alert(`Insufficient stock!\n\nAvailable: ${item.remaining} pcs`);return;}
+  const inventoryRef=doc(db,"inventory",item.keycode);
+  const transactionRef=doc(collection(db,"transactions"));
+  try{
+    const updatedRemaining=await runTransaction(db,async tx=>{
+      const snap=await tx.get(inventoryRef);
+      if(!snap.exists())throw new Error("Inventory record no longer exists.");
+      const latest=snap.data();
+      const latestRemaining=Number(latest.remaining);
+      if(!Number.isSafeInteger(latestRemaining)||latestRemaining<amount)throw new Error("Insufficient stock. Latest available: "+latestRemaining+" pcs.");
+      const next=latestRemaining-amount;
+      tx.update(inventoryRef,{
+        remaining:next,
+        updatedAt:serverTimestamp(),
+        lastTransactionId:transactionRef.id
+      });
+      tx.set(transactionRef,{
+        keycode:item.keycode,
+        filename:item.filename,
+        keyname:item.keyname,
+        type:"OUT",
+        quantity:amount,
+        remainingAfter:next,
+        uid:currentUser.uid,
+        email:currentUser.email||"",
+        displayName:currentUser.displayName||"",
+        createdAt:serverTimestamp()
+      });
+      return next;
+    });
+    alert(`STOCK UPDATED!\n\nKey: ${item.keycode}\nUsed: ${amount} pcs\nRemaining: ${updatedRemaining} pcs`);
+  }catch(error){
+    console.error("Stock deduction failed:",error);
+    alert("Hindi na-update ang stock.\n\n"+error.message);
+  }
+}
+
+function updateStats(){
+  $("totalTypes").textContent=inventory.length;
+  $("totalStarting").textContent=inventory.reduce((sum,x)=>sum+(Number(x.startingStocks)||0),0);
+  $("totalRemaining").textContent=inventory.reduce((sum,x)=>sum+(Number(x.remaining)||0),0);
+}
+$("search").addEventListener("input",renderInventory);
+</script>
+</body>
+</html>
